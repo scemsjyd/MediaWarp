@@ -216,7 +216,7 @@ func (handler *EmbyHandler) VideosHandler(ctx *gin.Context) {
 	// EmbyServer <= 4.8 ====> mediaSourceID = 343121
 	// EmbyServer >= 4.9 ====> mediaSourceID = mediasource_31
 	mediaSourceID := ctx.Query("mediasourceid")
-
+	mediaSourceID = strings.Replace(mediaSourceID, "mediasource_", "", 1)
 	// // 从 URL 中提取 item ID（例如：/emby/videos/43609/stream 中的 43609）
 	// var itemID string
 	// if matches := constants.EmbyRegexp.Router.VideosHandler.FindStringSubmatch(orginalPath); len(matches) > 0 {
@@ -272,7 +272,7 @@ func (handler *EmbyHandler) VideosHandler(ctx *gin.Context) {
 
 	strmFileType, opt := recgonizeStrmFileType(*item.Path)
 	for _, mediasource := range item.MediaSources {
-		if *mediasource.ID == mediaSourceID { // EmbyServer >= 4.9 返回的ID带有前缀mediasource_
+		if strings.Replace(*mediasource.ID, "mediasource_", "", 1) == mediaSourceID { // EmbyServer >= 4.9 返回的ID带有前缀mediasource_
 			switch strmFileType {
 			case constants.HTTPStrm:
 				if *mediasource.Protocol == emby.HTTP {
